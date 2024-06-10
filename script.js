@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 evaluate();
             } else if (button.id === 'clear') {
                 clear();
+            } else if (button.dataset.decimal) {
+                addDecimal();
+            } else if (button.id === 'backspace') {
+                backspace();
             }
         });
     });
@@ -54,6 +58,24 @@ document.addEventListener('DOMContentLoaded', () => {
         shouldResetDisplay = false;
     }
 
+    function addDecimal() {
+        if (shouldResetDisplay) {
+            display.textContent = '0';
+            shouldResetDisplay = false;
+        }
+        if (!display.textContent.includes('.')) {
+            display.textContent += '.';
+        }
+    }
+
+    function backspace() {
+        if (display.textContent.length > 1) {
+            display.textContent = display.textContent.slice(0, -1);
+        } else {
+            display.textContent = '0';
+        }
+    }
+
     function roundResult(number) {
         return Math.round(number * 1000) / 1000;
     }
@@ -74,4 +96,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
         }
     }
+
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        if (!isNaN(key)) {
+            handleNumber(key);
+        } else if (key === '.') {
+            addDecimal();
+        } else if (key === 'Backspace') {
+            backspace();
+        } else if (key === 'Enter' || key === '=') {
+            evaluate();
+        } else if (key === 'Escape') {
+            clear();
+        } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+            handleOperator(key);
+        }
+    });
 });
